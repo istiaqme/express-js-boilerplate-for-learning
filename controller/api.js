@@ -86,6 +86,50 @@ router.post('/signup', async (req, res) => {
     }
 })
 
+router.post('/login', async (req, res) => {
+    try {
+        let email = req.body.email;
+        let password = req.body.password;
+        let proceed = true;
+        // @validation part
+        // => validation - check email exists or not
+        let users = await UserModel.find({
+            email : email
+        });
+
+        if(users.length !== 1){
+            proceed = false;
+            res.send({
+                type: 'error',
+                msg: 'This Email Does Not Exist'
+            })
+        }
+
+
+        // @business logic
+        if(proceed === true){
+            if(users[0].password === md5(password)){
+                res.send({
+                    type: 'success',
+                    msg: 'Your Login Information Is Validated'
+                })
+                // @todo - session assignment
+            }
+            else {
+                res.send({
+                    type: 'error',
+                    msg: 'Email Matched but Password Did Not Match'
+                })
+            }
+
+            
+        }
+    }
+    catch(error) {
+        console.log(error);
+    }
+})
+
 
 
 
